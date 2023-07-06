@@ -5,6 +5,7 @@ import com.example.firstsite.dao.UserDao;
 import com.example.firstsite.entity.User;
 import com.example.firstsite.exception.DaoException;
 import com.example.firstsite.pool.ConnectionPool;
+import com.example.firstsite.service.impl.UserServiceImpl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,7 +22,10 @@ public class UserDaoImpl implements UserDao, BaseDao<Integer, User> {
     }
 
     public static UserDaoImpl getInstance() {
-        return instance;
+            if(instance == null){
+                instance = new UserDaoImpl();
+            }
+            return instance;
     }
 
     @Override
