@@ -1,5 +1,7 @@
 package com.example.firstsite.entity;
 
+import java.util.Objects;
+
 public class User extends BaseEntity{
     String name;
     String password;
@@ -24,6 +26,20 @@ public class User extends BaseEntity{
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        User user = (User) o;
+        return Objects.equals(name, user.name) && Objects.equals(password, user.password);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), name, password);
     }
 
     @Override
