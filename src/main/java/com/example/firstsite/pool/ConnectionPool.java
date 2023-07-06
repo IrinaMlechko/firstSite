@@ -33,18 +33,15 @@ public class ConnectionPool {
     }
 
     private ConnectionPool() {
-//        try {
-// //           properties.load(new FileReader(propertiesStreamReader.getFileFromResource(PROPERTIES_FILE_NAME).toFile()));
-//        } catch (IOException e) {
-//            e.printStackTrace(); // fatal exception
-//        }
-//        catch (ServiceException e) {
-//            throw new RuntimeException(e);
-//        }
-//        DATABASE_URL = (String) properties.get("db.url");
-        DATABASE_URL = "jdbc:postgresql://localhost:5432/postgres";
-        properties.put("user", "postgres");
-        properties.put("password", "postgres");
+        try {
+            properties.load(new FileReader(propertiesStreamReader.getFileFromResource(PROPERTIES_FILE_NAME).toFile()));
+        } catch (IOException e) {
+            e.printStackTrace(); // fatal exception
+        }
+        catch (ServiceException e) {
+            throw new RuntimeException(e);
+        }
+        DATABASE_URL = (String) properties.get("db.url");
         for (int i = 0; i < CAPACITY; i++) {
             try {
                Connection connection = DriverManager.getConnection(DATABASE_URL, properties);
