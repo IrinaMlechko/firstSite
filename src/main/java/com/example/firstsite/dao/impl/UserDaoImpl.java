@@ -14,7 +14,7 @@ import java.util.List;
 
 public class UserDaoImpl implements UserDao, BaseDao<Integer, User> {
 
-    private static final String SELECT_PASSWORD = "SELECT id, name, password FROM web.users WHERE name = ?";
+    private static final String SELECT_PASSWORD = "SELECT password FROM web.users WHERE name = ?";
     private static UserDaoImpl instance = new UserDaoImpl();
 
     private UserDaoImpl() {
