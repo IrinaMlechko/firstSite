@@ -45,13 +45,13 @@ public class ConnectionPool {
         DATABASE_URL = "jdbc:postgresql://localhost:5432/postgres";
         properties.put("user", "postgres");
         properties.put("password", "postgres");
-        for (Connection connection : connections) {
+        for (int i = 0; i < CAPACITY; i++) {
             try {
-                connection = DriverManager.getConnection(DATABASE_URL, properties);
+               Connection connection = DriverManager.getConnection(DATABASE_URL, properties);
+               connections.add(connection);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            connections.add(connection);
         }
     }
 
