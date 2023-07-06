@@ -21,9 +21,6 @@ public class UserDaoImpl implements UserDao, BaseDao<Integer, User> {
     }
 
     public static UserDaoImpl getInstance() {
-        if (instance == null) {
-            instance = new UserDaoImpl();
-        }
         return instance;
     }
 
