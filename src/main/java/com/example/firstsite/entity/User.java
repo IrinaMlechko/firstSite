@@ -3,8 +3,8 @@ package com.example.firstsite.entity;
 import java.util.Objects;
 
 public class User extends BaseEntity{
-    String name;
-    String password;
+    private String name;
+    private String password;
 
     public User(int id, String name, String password) {
         super(id);
@@ -47,7 +47,7 @@ public class User extends BaseEntity{
         final StringBuilder sb = new StringBuilder("User{");
         sb.append("name='").append(name).append('\'');
         sb.append(", password='").append(password).append('\'');
-        sb.append(", id=").append(id);
+        sb.append(", id=").append(super.toString());
         sb.append('}');
         return sb.toString();
     }

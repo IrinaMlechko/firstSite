@@ -33,9 +33,8 @@ public class Controller extends HttpServlet {
             page = command.execute(request);
             request.getRequestDispatcher(page).forward(request,response);
         } catch (CommandException e) {
-            throw new ServletException(e);
-//            request.setAttribute("error_msg", e.getCause());
-//            request.getRequestDispatcher(SERVER_ERROR_PAGE).forward(request, response);
+            request.setAttribute("error_msg", e.getCause());
+            request.getRequestDispatcher(SERVER_ERROR_PAGE).forward(request, response);
         }
     }
 

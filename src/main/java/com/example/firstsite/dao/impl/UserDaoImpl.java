@@ -6,11 +6,9 @@ import com.example.firstsite.entity.User;
 import com.example.firstsite.exception.DaoException;
 import com.example.firstsite.pool.ConnectionPool;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 public class UserDaoImpl implements UserDao, BaseDao<Integer, User> {
 
@@ -30,8 +28,8 @@ public class UserDaoImpl implements UserDao, BaseDao<Integer, User> {
     }
 
     @Override
-    public User findEntityById(Integer id) throws DaoException {
-        return null;
+    public Optional<User> findEntityById(Integer id) throws DaoException {
+        return Optional.empty();
     }
 
     @Override
@@ -40,8 +38,8 @@ public class UserDaoImpl implements UserDao, BaseDao<Integer, User> {
     }
 
     @Override
-    public User findEntityById(Long id) throws DaoException {
-        return null;
+    public Optional<User> findEntityById(Long id) throws DaoException {
+        return Optional.empty();
     }
 
     @Override
@@ -62,19 +60,17 @@ public class UserDaoImpl implements UserDao, BaseDao<Integer, User> {
     @Override
     public boolean authentificate(String name, String password) throws DaoException {
         boolean match = false;
-        ConnectionPool pool = ConnectionPool.getInstance();
-        Connection connection = pool.getConnection();
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_PASSWORD)) {
-            preparedStatement.setString(1, name);
-            preparedStatement.execute();
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+        try (var connection = ConnectionPool.getInstance().getConnection();
+             var statement = connection.prepareStatement(SELECT_PASSWORD)) {
+            statement.setString(1, name);
+            try (var resultSet = statement.executeQuery()) {
                 String passFromDb;
                 if (resultSet.next()) {
                     passFromDb = resultSet.getString(1);
                     match = password.equals(passFromDb);
                 }
             }
-        } catch (SQLException e) {
+        }  catch (SQLException e) {
             throw new DaoException(e);
         }
         return match;

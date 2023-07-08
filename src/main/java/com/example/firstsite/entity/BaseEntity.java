@@ -3,7 +3,7 @@ package com.example.firstsite.entity;
 import java.util.Objects;
 
 public class BaseEntity {
-    int id;
+    private int id;
 
     public BaseEntity(int id) {
         this.id = id;

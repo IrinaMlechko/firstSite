@@ -7,11 +7,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Optional;
 
 public interface BaseDao<K, T extends BaseEntity> {
     List<T> findAll() throws DaoException;
 
-    T findEntityById(K id) throws DaoException;
+    Optional<T> findEntityById(K id) throws DaoException;
 
     boolean delete(K id) throws DaoException;
 
@@ -19,22 +20,4 @@ public interface BaseDao<K, T extends BaseEntity> {
 
     T update(T t) throws DaoException;
 
-    default void close(Statement statement) {
-        try {
-            if (statement != null) {
-                statement.close();
-            }
-        } catch (SQLException e) { // log
-        }
-    }
-
-    default void close(Connection connection) {
-        try {
-            if (connection != null) {
-                connection.close(); // or connection return code to the pool
-            }
-        } catch (SQLException e) {
-// log
-        }
-    }
 }

@@ -1,7 +1,7 @@
 package com.example.firstsite.pool;
 
 import com.example.firstsite.exception.ServiceException;
-import com.example.firstsite.reader.PropertiesStreamReader;
+import com.example.firstsite.util.PropertiesStreamReader;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -22,8 +23,9 @@ public class ConnectionPool {
     private static String DATABASE_URL;
     private static Lock lock = new ReentrantLock(true);
     private static PropertiesStreamReader propertiesStreamReader = new PropertiesStreamReader();
-    private BlockingQueue<Connection> connections = new LinkedBlockingQueue<>(CAPACITY);
-    private BlockingQueue<Connection> usedConnections = new LinkedBlockingQueue<>(CAPACITY);
+    private BlockingQueue<ProxyConnection> connections = new LinkedBlockingQueue<>(CAPACITY);
+    private static AtomicBoolean isCreated = new AtomicBoolean(false);
+
     static {
         try {
             DriverManager.registerDriver(new org.postgresql.Driver());
@@ -43,12 +45,8 @@ public class ConnectionPool {
         }
         DATABASE_URL = (String) properties.get("db.url");
         for (int i = 0; i < CAPACITY; i++) {
-            try {
-               Connection connection = DriverManager.getConnection(DATABASE_URL, properties);
-               connections.add(connection);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            Connection connection = createConnection(DATABASE_URL, properties);
+            connections.add((ProxyConnection)connection);
         }
     }
 
@@ -56,11 +54,11 @@ public class ConnectionPool {
         if (instance == null) {
             try {
                 lock.lock();
-                instance = new ConnectionPool();
-                } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-         finally {
+                if (!isCreated.get()) {
+                    instance = new ConnectionPool();
+                    isCreated.set(true);
+                }
+            } finally {
                 lock.unlock();
             }
         }
@@ -68,7 +66,7 @@ public class ConnectionPool {
     }
 
     public Connection getConnection() {
-        Connection connection = null;
+        ProxyConnection connection = null;
         try {
             connection = connections.take();
         } catch (InterruptedException e) {
@@ -78,16 +76,19 @@ public class ConnectionPool {
     }
 
     public void releaseConnection(Connection connection) {
-        connections.add(connection);
+        try{
+        connections.put((ProxyConnection) connection);} catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     public void destroyPool() {
-        for (Connection connection : connections) {
+        for (int i = 0; i < CAPACITY; i++) {
             try {
-                connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-                //log
+                connections.take().reallyClose();
+            } catch (InterruptedException e) {
+                /// log e.printStackTrace();
             }
         }
         DriverManager.getDrivers().asIterator().forEachRemaining(driver -> {
@@ -97,5 +98,15 @@ public class ConnectionPool {
                 e.printStackTrace();
             }
         });
+    }
+    private Connection createConnection(String url, Properties properties) {
+        Connection proxyConnection;
+        try {
+            proxyConnection = new ProxyConnection(DriverManager.getConnection(url, properties));
+        } catch (SQLException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+        return proxyConnection;
+
     }
 }
