@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public class UserDaoImpl implements UserDao, BaseDao<Integer, User> {
 
-    private static final String SELECT_PASSWORD = "SELECT password FROM web.users WHERE name = ?";
+    private static final String SELECT_PASSWORD = "SELECT password FROM web.credentials WHERE login = ?";
     private static UserDaoImpl instance = new UserDaoImpl();
 
     private UserDaoImpl() {
@@ -58,11 +58,11 @@ public class UserDaoImpl implements UserDao, BaseDao<Integer, User> {
     }
 
     @Override
-    public boolean authentificate(String name, String password) throws DaoException {
+    public boolean authentificate(String login, String password) throws DaoException {
         boolean match = false;
         try (var connection = ConnectionPool.getInstance().getConnection();
              var statement = connection.prepareStatement(SELECT_PASSWORD)) {
-            statement.setString(1, name);
+            statement.setString(1, login);
             try (var resultSet = statement.executeQuery()) {
                 String passFromDb;
                 if (resultSet.next()) {

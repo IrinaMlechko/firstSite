@@ -4,9 +4,11 @@ import com.example.firstsite.dao.impl.UserDaoImpl;
 import com.example.firstsite.exception.DaoException;
 import com.example.firstsite.exception.ServiceException;
 import com.example.firstsite.service.UserService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class UserServiceImpl implements UserService {
-
+    static Logger logger = LogManager.getLogger();
     private static UserServiceImpl instance;
 
     private UserServiceImpl() {
@@ -23,8 +25,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean authenticate(String userName, String password) throws ServiceException {
         //validate login, password, md5
+        logger.info("Authenticate user " + userName);
         UserDaoImpl userDao = UserDaoImpl.getInstance();
-        boolean match = false;
+        boolean match;
         try{ match = userDao.authentificate(userName, password);}
         catch(DaoException e){
             throw new ServiceException(e);
