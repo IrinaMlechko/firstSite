@@ -7,6 +7,8 @@ import com.example.firstsite.service.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Optional;
+
 public class UserServiceImpl implements UserService {
     static Logger logger = LogManager.getLogger();
     private static UserServiceImpl instance;
@@ -34,4 +36,27 @@ public class UserServiceImpl implements UserService {
         }
         return match;
     }
+
+    @Override
+    public Optional<String> findName(String login) throws ServiceException {
+        logger.info("Get name for the user with login " + login);
+        UserDaoImpl userDao = UserDaoImpl.getInstance();
+        Optional<String> firstName;
+        try{ firstName = userDao.findUserFirstNameByLogin(login);}
+        catch(DaoException e){
+            throw new ServiceException(e);
+        }
+        return firstName;
+    }
+    @Override
+    public boolean existsByLogin(String login) throws ServiceException {
+        logger.info("Check if user " + login + " already exists.");
+        UserDaoImpl userDao = UserDaoImpl.getInstance();
+        boolean match;
+        try{ match = userDao.existsByLogin(login);}
+        catch(DaoException e){
+            throw new ServiceException(e);
+        }
+        return match;
+    };
 }

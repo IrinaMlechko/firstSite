@@ -7,6 +7,8 @@ import com.example.firstsite.service.UserService;
 import com.example.firstsite.service.impl.UserServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.Optional;
+
 import static com.example.firstsite.util.Message.LOGIN_FAILED_MESSAGE;
 import static com.example.firstsite.util.PageName.INDEX_PAGE;
 import static com.example.firstsite.util.PageName.MAIN_PAGE;
@@ -24,9 +26,16 @@ public class LoginCommand implements Command {
         String password = request.getParameter(PASSWORD);
         UserService userService = UserServiceImpl.getInstance();
         String page;
+        String name;
         try{
         if (userService.authenticate(login, password)) {
-            request.setAttribute(USER, login);
+            Optional<String> firstName = userService.findName(login);
+            if(firstName.isPresent()){
+                name = firstName.get();
+            } else{
+                name = login;
+            }
+            request.setAttribute(USER, name);
             page = MAIN_PAGE;
         } else {
             request.setAttribute(FAILED, LOGIN_FAILED_MESSAGE);

@@ -11,9 +11,13 @@
     Login: <input type="text" name="login" value=""/>
     <br/>
     Password: <input type="password" name = "password" value = ""/>
-    <input type="submit" name="submit" value="submit"/>
+    <input type="submit" name="submit" value="Submit"/>
     <br/>
     ${failed}
+</form>
+<br/>
+<form action="pages/registration.jsp">
+    <p>Not a user yet? <a href="pages/registration.jsp">Sign in</a></p>
 </form>
 </body>
 </html>

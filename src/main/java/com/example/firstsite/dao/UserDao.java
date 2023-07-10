@@ -11,6 +11,8 @@ public interface UserDao extends BaseDao <Integer, User> {
 
     Optional<User> findEntityById(Long id) throws DaoException;
 
-    List<User> findUserByName(String name) throws DaoException;
+    Optional<String> findUserFirstNameByLogin(String login) throws DaoException;
     boolean authentificate(String name, String password) throws DaoException;
+
+    boolean existsByLogin(String login) throws DaoException;
 }
