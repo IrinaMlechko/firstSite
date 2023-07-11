@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 
 import static com.example.firstsite.util.PageName.SERVER_ERROR_PAGE;
+import static com.example.firstsite.util.RequestAttributeName.ERROR_MSG;
 import static com.example.firstsite.util.RequestParameterName.COMMAND;
 
 @WebServlet(name = "controller", urlPatterns = "/controller")
@@ -46,19 +47,11 @@ public class Controller extends HttpServlet {
         String commandStr = request.getParameter(COMMAND);
         Command command = CommandType.define(commandStr);
         String page;
-//        try {
-//            page = command.execute(request);
-//            if (command instanceof SignUpCommand && page.equals(MAIN_PAGE)) {
-//                response.sendRedirect(request.getContextPath() + page);
-//            } else {
-//                request.getRequestDispatcher(page).forward(request, response);
-//            }
-//        }
         try {
             page = command.execute(request);
             request.getRequestDispatcher(page).forward(request, response);
         } catch (CommandException e) {
-            request.setAttribute("error_msg", e.getLocalizedMessage());
+            request.setAttribute(ERROR_MSG, e.getLocalizedMessage());
             request.getRequestDispatcher(SERVER_ERROR_PAGE).forward(request, response);
         }
     }
@@ -66,6 +59,5 @@ public class Controller extends HttpServlet {
     public void destroy() {
         ConnectionPool.getInstance().destroyPool();
         logger.info("Servlet destroyed" + this.getServletName());
-
     }
 }

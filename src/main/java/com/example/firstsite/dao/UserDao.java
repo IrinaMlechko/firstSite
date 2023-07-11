@@ -12,7 +12,7 @@ public interface UserDao extends BaseDao <Integer, Credentials> {
     Optional<Credentials> findEntityById(Long id) throws DaoException;
 
     Optional<String> findUserFirstNameByLogin(String login) throws DaoException;
-    boolean authentificate(String name, String password) throws DaoException;
+    boolean authenticate(String name, String password) throws DaoException;
 
     boolean existsByLogin(String login) throws DaoException;
 

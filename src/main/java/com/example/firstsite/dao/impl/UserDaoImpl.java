@@ -65,7 +65,7 @@ public class UserDaoImpl implements UserDao, BaseDao<Integer, Credentials> {
     }
 
     @Override
-    public boolean authentificate(String login, String password) throws DaoException {
+    public boolean authenticate(String login, String password) throws DaoException {
         boolean match = false;
         try (var connection = ConnectionPool.getInstance().getConnection();
              var statement = connection.prepareStatement(SELECT_PASSWORD)) {

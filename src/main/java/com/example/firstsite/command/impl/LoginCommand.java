@@ -27,20 +27,21 @@ public class LoginCommand implements Command {
         UserService userService = UserServiceImpl.getInstance();
         String page;
         String name;
-        try{
-        if (userService.authenticate(login, password)) {
-            Optional<String> firstName = userService.findName(login);
-            if(firstName.isPresent()){
-                name = firstName.get();
-            } else{
-                name = login;
+        try {
+            if (userService.authenticate(login, password)) {
+                Optional<String> firstName = userService.findName(login);
+                if (firstName.isPresent()) {
+                    name = firstName.get();
+                } else {
+                    name = login;
+                }
+                request.setAttribute(USER, name);
+                page = MAIN_PAGE;
+            } else {
+                request.setAttribute(FAILED, LOGIN_FAILED_MESSAGE);
+                page = INDEX_PAGE;
             }
-            request.setAttribute(USER, name);
-            page = MAIN_PAGE;
-        } else {
-            request.setAttribute(FAILED, LOGIN_FAILED_MESSAGE);
-            page = INDEX_PAGE;
-        }} catch(ServiceException e){
+        } catch (ServiceException e) {
             throw new CommandException(e);
         }
         return page;

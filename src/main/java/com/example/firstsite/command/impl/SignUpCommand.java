@@ -23,9 +23,8 @@ import static com.example.firstsite.util.RequestAttributeName.USER;
 import static com.example.firstsite.util.RequestParameterName.*;
 
 public class SignUpCommand implements Command {
-
+    public static final String DATE_FORMAT = "dd-MM-yyyy";
     static Logger logger = LogManager.getLogger();
-
     UserServiceImpl userService = UserServiceImpl.getInstance();
 
     @Override
@@ -35,17 +34,16 @@ public class SignUpCommand implements Command {
         String firstName = request.getParameter(FIRST_NAME);
         String lastName = request.getParameter(LAST_NAME);
         String dateOfBirthStr = request.getParameter(DATE_OF_BIRTH);
-        String dateFormat = "dd-MM-yyyy";
         UserService userService = UserServiceImpl.getInstance();
         String page;
         try {
             if (!userService.existsByLogin(login)) {
                 LocalDate dateOfBirth;
                 try {
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
                     dateOfBirth = LocalDate.parse(dateOfBirthStr, formatter);
                 } catch (DateTimeParseException e) {
-                    throw new CommandException("Error parsing date of birth", e);
+                    throw new CommandException(e);
                 }
                 User user = new User(0, firstName, lastName, dateOfBirth);
                 int userId = userService.createUser(user);
@@ -55,12 +53,11 @@ public class SignUpCommand implements Command {
                 request.setAttribute(USER, firstName);
                 page = MAIN_PAGE;
             } else {
-                // Пользователь с таким логином уже существует
+                logger.info(String.format("There is already a user mit login '%s", login));
                 request.setAttribute(FAILED, LOGIN_ALREADY_EXISTS_MESSAGE);
                 page = REGISTRATION_PAGE;
             }
         } catch (ServiceException e) {
-            logger.error("Error by creating " + e);
             throw new CommandException(e);
         }
         return page;
