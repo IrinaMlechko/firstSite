@@ -14,9 +14,9 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
-import static com.example.firstsite.util.PageName.SERVER_ERROR_PAGE;
-import static com.example.firstsite.util.RequestAttributeName.ERROR_MSG;
-import static com.example.firstsite.util.RequestParameterName.COMMAND;
+import static com.example.firstsite.command.constant.PageName.SERVER_ERROR_PAGE;
+import static com.example.firstsite.command.constant.RequestAttributeName.ERROR_MSG;
+import static com.example.firstsite.command.constant.RequestParameterName.COMMAND;
 
 @WebServlet(name = "controller", urlPatterns = "/controller")
 public class Controller extends HttpServlet {

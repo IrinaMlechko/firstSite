@@ -1,4 +1,4 @@
-package com.example.firstsite.util;
+package com.example.firstsite.command.constant;
 
 public class RequestAttributeName {
     public static final String USER = "user";

@@ -9,13 +9,13 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Optional;
 
-import static com.example.firstsite.util.Message.LOGIN_FAILED_MESSAGE;
-import static com.example.firstsite.util.PageName.INDEX_PAGE;
-import static com.example.firstsite.util.PageName.MAIN_PAGE;
-import static com.example.firstsite.util.RequestAttributeName.FAILED;
-import static com.example.firstsite.util.RequestAttributeName.USER;
-import static com.example.firstsite.util.RequestParameterName.LOGIN;
-import static com.example.firstsite.util.RequestParameterName.PASSWORD;
+import static com.example.firstsite.command.constant.Message.LOGIN_FAILED_MESSAGE;
+import static com.example.firstsite.command.constant.PageName.INDEX_PAGE;
+import static com.example.firstsite.command.constant.PageName.MAIN_PAGE;
+import static com.example.firstsite.command.constant.RequestAttributeName.FAILED;
+import static com.example.firstsite.command.constant.RequestAttributeName.USER;
+import static com.example.firstsite.command.constant.RequestParameterName.LOGIN;
+import static com.example.firstsite.command.constant.RequestParameterName.PASSWORD;
 
 public class LoginCommand implements Command {
     private UserServiceImpl userService = UserServiceImpl.getInstance();

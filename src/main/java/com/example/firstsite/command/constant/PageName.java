@@ -1,4 +1,4 @@
-package com.example.firstsite.util;
+package com.example.firstsite.command.constant;
 
 public class PageName {
     public static final String INDEX_PAGE = "index.jsp";

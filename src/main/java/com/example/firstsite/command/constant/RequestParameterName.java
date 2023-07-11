@@ -1,4 +1,4 @@
-package com.example.firstsite.util;
+package com.example.firstsite.command.constant;
 
 public class RequestParameterName {
     public static final String COMMAND = "command";

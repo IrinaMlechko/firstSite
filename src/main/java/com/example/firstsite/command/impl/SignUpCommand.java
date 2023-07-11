@@ -15,12 +15,12 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
-import static com.example.firstsite.util.Message.LOGIN_ALREADY_EXISTS_MESSAGE;
-import static com.example.firstsite.util.PageName.MAIN_PAGE;
-import static com.example.firstsite.util.PageName.REGISTRATION_PAGE;
-import static com.example.firstsite.util.RequestAttributeName.FAILED;
-import static com.example.firstsite.util.RequestAttributeName.USER;
-import static com.example.firstsite.util.RequestParameterName.*;
+import static com.example.firstsite.command.constant.Message.LOGIN_ALREADY_EXISTS_MESSAGE;
+import static com.example.firstsite.command.constant.PageName.MAIN_PAGE;
+import static com.example.firstsite.command.constant.PageName.REGISTRATION_PAGE;
+import static com.example.firstsite.command.constant.RequestAttributeName.FAILED;
+import static com.example.firstsite.command.constant.RequestAttributeName.USER;
+import static com.example.firstsite.command.constant.RequestParameterName.*;
 
 public class SignUpCommand implements Command {
     public static final String DATE_FORMAT = "dd-MM-yyyy";

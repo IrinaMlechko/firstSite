@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean authenticate(String userName, String password) throws ServiceException {
-        //validate login, password, md5
+        //validate login
         logger.info("Authenticate user " + userName);
         UserDaoImpl userDao = UserDaoImpl.getInstance();
         boolean match;
