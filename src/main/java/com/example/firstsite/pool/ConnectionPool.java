@@ -20,7 +20,7 @@ public class ConnectionPool {
     public static final String PROPERTIES_FILE_NAME = "database.properties";
     private static final Properties properties = new Properties();
     private static ConnectionPool instance;
-    private static String DATABASE_URL;
+    private static String databaseUrl;
     private static Lock lock = new ReentrantLock(true);
     private static PropertiesStreamReader propertiesStreamReader = new PropertiesStreamReader();
     private BlockingQueue<ProxyConnection> connections = new LinkedBlockingQueue<>(CAPACITY);
@@ -37,15 +37,12 @@ public class ConnectionPool {
     private ConnectionPool() {
         try {
             properties.load(new FileReader(propertiesStreamReader.getFileFromResource(PROPERTIES_FILE_NAME).toFile()));
-        } catch (IOException e) {
-            e.printStackTrace(); // fatal exception
-        }
-        catch (ServiceException e) {
+        } catch (IOException | ServiceException e) {
             throw new RuntimeException(e);
         }
-        DATABASE_URL = (String) properties.get("db.url");
+        databaseUrl = properties.getProperty("db.url");
         for (int i = 0; i < CAPACITY; i++) {
-            Connection connection = createConnection(DATABASE_URL, properties);
+            Connection connection = createConnection(databaseUrl, properties);
             connections.add((ProxyConnection)connection);
         }
     }
@@ -70,43 +67,43 @@ public class ConnectionPool {
         try {
             connection = connections.take();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Thread.currentThread().interrupt();
         }
         return connection;
     }
 
     public void releaseConnection(Connection connection) {
-        try{
-        connections.put((ProxyConnection) connection);} catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        if (connection != null) {
+            try {
+                connections.put((ProxyConnection) connection);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
-
     }
 
     public void destroyPool() {
-        for (int i = 0; i < CAPACITY; i++) {
+        for (Connection connection : connections) {
             try {
-                connections.take().reallyClose();
-            } catch (InterruptedException e) {
-                /// log e.printStackTrace();
+                connection.close();
+            } catch (SQLException e) {
+                // Логируйте или обрабатывайте исключение здесь
             }
         }
-        DriverManager.getDrivers().asIterator().forEachRemaining(driver -> {
-            try {
-                DriverManager.deregisterDriver(driver);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        });
-    }
-    private Connection createConnection(String url, Properties properties) {
-        Connection proxyConnection;
+        connections.clear();
+
         try {
-            proxyConnection = new ProxyConnection(DriverManager.getConnection(url, properties));
+            DriverManager.deregisterDriver(new org.postgresql.Driver());
+        } catch (SQLException e) {
+            // Логируйте или обрабатывайте исключение здесь
+        }
+    }
+
+    private Connection createConnection(String url, Properties properties) {
+        try {
+            return new ProxyConnection(DriverManager.getConnection(url, properties));
         } catch (SQLException e) {
             throw new ExceptionInInitializerError(e);
         }
-        return proxyConnection;
-
     }
 }

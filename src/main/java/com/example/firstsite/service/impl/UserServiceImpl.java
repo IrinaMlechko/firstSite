@@ -1,6 +1,8 @@
 package com.example.firstsite.service.impl;
 
 import com.example.firstsite.dao.impl.UserDaoImpl;
+import com.example.firstsite.entity.Credentials;
+import com.example.firstsite.entity.User;
 import com.example.firstsite.exception.DaoException;
 import com.example.firstsite.exception.ServiceException;
 import com.example.firstsite.service.UserService;
@@ -58,5 +60,24 @@ public class UserServiceImpl implements UserService {
             throw new ServiceException(e);
         }
         return match;
-    };
+    }
+    @Override
+    public int createUser(User user) throws ServiceException {
+        UserDaoImpl userDao = UserDaoImpl.getInstance();
+        try {
+            return userDao.createUser(user);
+        } catch (DaoException e) {
+            throw new ServiceException("Error creating user", e);
+        }
+    }
+
+    @Override
+    public void createCredentials(Credentials credentials) throws ServiceException {
+        UserDaoImpl userDao = UserDaoImpl.getInstance();
+        try {
+            userDao.createCredentials(credentials);
+        } catch (DaoException e) {
+            throw new ServiceException("Error creating credentials", e);
+        }
+    }
 }

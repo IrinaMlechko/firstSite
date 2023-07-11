@@ -1,16 +1,18 @@
 package com.example.firstsite.controller;
 
-import java.io.*;
-
 import com.example.firstsite.command.Command;
 import com.example.firstsite.command.CommandType;
 import com.example.firstsite.exception.CommandException;
 import com.example.firstsite.pool.ConnectionPool;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.*;
-import jakarta.servlet.annotation.*;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.io.IOException;
 
 import static com.example.firstsite.util.PageName.SERVER_ERROR_PAGE;
 import static com.example.firstsite.util.RequestParameterName.COMMAND;
@@ -31,7 +33,7 @@ public class Controller extends HttpServlet {
         String page;
         try {
             page = command.execute(request);
-            request.getRequestDispatcher(page).forward(request,response);
+            request.getRequestDispatcher(page).forward(request, response);
         } catch (CommandException e) {
             request.setAttribute("error_msg", e.getCause());
             request.getRequestDispatcher(SERVER_ERROR_PAGE).forward(request, response);
@@ -39,7 +41,26 @@ public class Controller extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("text/html");
+        String commandStr = request.getParameter(COMMAND);
+        Command command = CommandType.define(commandStr);
+        String page;
+//        try {
+//            page = command.execute(request);
+//            if (command instanceof SignUpCommand && page.equals(MAIN_PAGE)) {
+//                response.sendRedirect(request.getContextPath() + page);
+//            } else {
+//                request.getRequestDispatcher(page).forward(request, response);
+//            }
+//        }
+        try {
+            page = command.execute(request);
+            request.getRequestDispatcher(page).forward(request, response);
+        } catch (CommandException e) {
+            request.setAttribute("error_msg", e.getLocalizedMessage());
+            request.getRequestDispatcher(SERVER_ERROR_PAGE).forward(request, response);
+        }
     }
 
     public void destroy() {
