@@ -2,6 +2,8 @@ package com.example.firstsite.pool;
 
 import com.example.firstsite.exception.ServiceException;
 import com.example.firstsite.util.PropertiesStreamReader;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -16,6 +18,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class ConnectionPool {
+    static Logger logger = LogManager.getLogger();
     public static final int CAPACITY = 3;
     public static final String PROPERTIES_FILE_NAME = "database.properties";
     private static final Properties properties = new Properties();
@@ -30,6 +33,7 @@ public class ConnectionPool {
         try {
             DriverManager.registerDriver(new org.postgresql.Driver());
         } catch (SQLException e) {
+            logger.fatal("Error by registering driver: " + e.getMessage());
             throw new ExceptionInInitializerError(e);
         }
     }
@@ -38,7 +42,8 @@ public class ConnectionPool {
         try {
             properties.load(new FileReader(propertiesStreamReader.getFileFromResource(PROPERTIES_FILE_NAME).toFile()));
         } catch (IOException | ServiceException e) {
-            throw new RuntimeException(e);
+            logger.fatal("Error loading properties file: " + e.getMessage());
+            throw new ExceptionInInitializerError(e);
         }
         databaseUrl = properties.getProperty("db.url");
         for (int i = 0; i < CAPACITY; i++) {
@@ -67,6 +72,7 @@ public class ConnectionPool {
         try {
             connection = connections.take();
         } catch (InterruptedException e) {
+            logger.fatal("Error by getting connection: " + e.getMessage());
             Thread.currentThread().interrupt();
         }
         return connection;
@@ -77,25 +83,27 @@ public class ConnectionPool {
             try {
                 connections.put((ProxyConnection) connection);
             } catch (InterruptedException e) {
+                logger.fatal("Error closing connection: " + e.getMessage());
                 Thread.currentThread().interrupt();
             }
         }
     }
 
     public void destroyPool() {
-        for (Connection connection : connections) {
+        for (int i = 0; i < CAPACITY; i++) {
             try {
-                connection.close();
-            } catch (SQLException e) {
-                // Логируйте или обрабатывайте исключение здесь
+                connections.take().reallyClose();
+            } catch (InterruptedException e) {
+                logger.fatal("Error by closing connections: " + e.getMessage());
+                throw new ExceptionInInitializerError(e);
             }
         }
-        connections.clear();
 
         try {
             DriverManager.deregisterDriver(new org.postgresql.Driver());
         } catch (SQLException e) {
-            // Логируйте или обрабатывайте исключение здесь
+            logger.fatal("Error deregistering driver: " + e.getMessage());
+            throw new ExceptionInInitializerError(e);
         }
     }
 
@@ -103,6 +111,7 @@ public class ConnectionPool {
         try {
             return new ProxyConnection(DriverManager.getConnection(url, properties));
         } catch (SQLException e) {
+            logger.fatal("Error creating connection: " + e.getMessage());
             throw new ExceptionInInitializerError(e);
         }
     }

@@ -7,9 +7,6 @@ import com.example.firstsite.exception.DaoException;
 import java.util.Optional;
 
 public interface UserDao extends BaseDao <Integer, Credentials> {
-    Optional<Credentials> findEntityById(Integer id) throws DaoException;
-
-    Optional<Credentials> findEntityById(Long id) throws DaoException;
 
     Optional<String> findUserFirstNameByLogin(String login) throws DaoException;
     boolean authenticate(String name, String password) throws DaoException;

@@ -12,8 +12,6 @@ import java.util.Optional;
 public interface BaseDao<K, T extends BaseEntity> {
     List<T> findAll() throws DaoException;
 
-    Optional<T> findEntityById(K id) throws DaoException;
-
     boolean delete(K id) throws DaoException;
 
     boolean create(T t) throws DaoException;
