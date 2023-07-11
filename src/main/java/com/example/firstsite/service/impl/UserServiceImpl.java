@@ -9,7 +9,6 @@ import com.example.firstsite.service.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
@@ -58,6 +57,7 @@ public class UserServiceImpl implements UserService {
             throw new ServiceException(e);
         }
     }
+
     @Override
     public Optional<String> findName(String login) throws ServiceException {
         logger.info("Get name for the user with login " + login);

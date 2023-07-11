@@ -30,11 +30,7 @@ public class LoginCommand implements Command {
         try {
             if (userService.authenticate(login, password)) {
                 Optional<String> firstName = userService.findName(login);
-                if (firstName.isPresent()) {
-                    name = firstName.get();
-                } else {
-                    name = login;
-                }
+                name = firstName.orElse(login);
                 request.setAttribute(USER, name);
                 page = MAIN_PAGE;
             } else {
