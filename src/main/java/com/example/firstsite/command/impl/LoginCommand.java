@@ -18,7 +18,7 @@ import static com.example.firstsite.util.RequestParameterName.LOGIN;
 import static com.example.firstsite.util.RequestParameterName.PASSWORD;
 
 public class LoginCommand implements Command {
-    UserServiceImpl userService = UserServiceImpl.getInstance();
+    private UserServiceImpl userService = UserServiceImpl.getInstance();
 
     @Override
     public String execute(HttpServletRequest request) throws CommandException {

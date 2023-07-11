@@ -25,7 +25,7 @@ import static com.example.firstsite.util.RequestParameterName.*;
 public class SignUpCommand implements Command {
     public static final String DATE_FORMAT = "dd-MM-yyyy";
     static Logger logger = LogManager.getLogger();
-    UserServiceImpl userService = UserServiceImpl.getInstance();
+    private UserServiceImpl userService = UserServiceImpl.getInstance();
 
     @Override
     public String execute(HttpServletRequest request) throws CommandException {
