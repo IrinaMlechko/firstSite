@@ -72,18 +72,18 @@ public class ConnectionPool {
         try {
             connection = connections.take();
         } catch (InterruptedException e) {
-            logger.fatal("Error by getting connection: " + e.getMessage());
+            logger.warn("Error by getting connection: " + e.getMessage());
             Thread.currentThread().interrupt();
         }
         return connection;
     }
 
     public void releaseConnection(Connection connection) {
-        if (connection != null) {
+        if (connection != null && connection instanceof ProxyConnection proxy) {
             try {
-                connections.put((ProxyConnection) connection);
+                connections.put(proxy);
             } catch (InterruptedException e) {
-                logger.fatal("Error closing connection: " + e.getMessage());
+                logger.warn("Error closing connection: " + e.getMessage());
                 Thread.currentThread().interrupt();
             }
         }

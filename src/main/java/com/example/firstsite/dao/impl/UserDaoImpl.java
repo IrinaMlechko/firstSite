@@ -36,7 +36,8 @@ public class UserDaoImpl implements UserDao, BaseDao<Integer, Credentials> {
     @Override
     public boolean authenticate(String login, String password) throws DaoException {
         boolean match = false;
-        try (var connection = ConnectionPool.getInstance().getConnection(); var statement = connection.prepareStatement(SELECT_PASSWORD)) {
+        try (var connection = ConnectionPool.getInstance().getConnection();
+             var statement = connection.prepareStatement(SELECT_PASSWORD)) {
             statement.setString(1, login);
             try (var resultSet = statement.executeQuery()) {
                 String passFromDb;
@@ -54,7 +55,8 @@ public class UserDaoImpl implements UserDao, BaseDao<Integer, Credentials> {
     @Override
     public Optional<String> findUserFirstNameByLogin(String login) throws DaoException {
         Optional<String> firstName = Optional.empty();
-        try (var connection = ConnectionPool.getInstance().getConnection(); var statement = connection.prepareStatement(SELECT_FIRST_NAME)) {
+        try (var connection = ConnectionPool.getInstance().getConnection();
+             var statement = connection.prepareStatement(SELECT_FIRST_NAME)) {
             statement.setString(1, login);
             try (var resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
@@ -70,7 +72,8 @@ public class UserDaoImpl implements UserDao, BaseDao<Integer, Credentials> {
     @Override
     public boolean existsByLogin(String login) throws DaoException {
         boolean match = false;
-        try (var connection = ConnectionPool.getInstance().getConnection(); var statement = connection.prepareStatement(SELECT_LOGIN)) {
+        try (var connection = ConnectionPool.getInstance().getConnection();
+             var statement = connection.prepareStatement(SELECT_LOGIN)) {
             statement.setString(1, login);
             try (var resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {

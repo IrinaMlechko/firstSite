@@ -6,10 +6,11 @@ import com.example.firstsite.entity.User;
 import com.example.firstsite.exception.DaoException;
 import com.example.firstsite.exception.ServiceException;
 import com.example.firstsite.service.UserService;
+import com.example.firstsite.util.PasswordEncryptor;
+import com.example.firstsite.util.Validator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 
@@ -32,30 +33,20 @@ public class UserServiceImpl implements UserService {
     public boolean authenticate(String userName, String password) throws ServiceException {
         //validate login
         logger.info("Authenticate user " + userName);
+        if (!Validator.validateUsername(userName)) {
+            throw new ServiceException("Invalid username");
+        }
         UserDaoImpl userDao = UserDaoImpl.getInstance();
         boolean match;
         try {
-            String encryptedPassword = encryptPassword(password);
+            String encryptedPassword = PasswordEncryptor.encryptPassword(password);
             match = userDao.authenticate(userName, encryptedPassword);
         } catch (DaoException e) {
             throw new ServiceException(e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new ServiceException("Error encrypting password", e);
         }
         return match;
-    }
-
-    private String encryptPassword(String password) throws ServiceException {
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            md.update(password.getBytes());
-            byte[] digest = md.digest();
-            StringBuilder sb = new StringBuilder();
-            for (byte b : digest) {
-                sb.append(String.format("%02x", b));
-            }
-            return sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new ServiceException(e);
-        }
     }
 
     @Override
@@ -96,14 +87,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void createCredentials(Credentials credentials) throws ServiceException {
+        if (!Validator.validateUsername(credentials.getLogin())) {
+            throw new ServiceException("Invalid username.");
+        }
         UserDaoImpl userDao = UserDaoImpl.getInstance();
         try {
-            String encryptedPassword = encryptPassword(credentials.getPassword());
+            String encryptedPassword = PasswordEncryptor.encryptPassword(credentials.getPassword());
             credentials.setPassword(encryptedPassword);
             userDao.createCredentials(credentials);
         } catch (DaoException e) {
             throw new ServiceException("Error creating credentials", e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new ServiceException("Error encrypting password", e);
         }
     }
-
 }
