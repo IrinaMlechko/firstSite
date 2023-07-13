@@ -17,12 +17,12 @@ import java.util.List;
 import java.util.Optional;
 
 public class UserDaoImpl implements UserDao, BaseDao<Integer, Credentials> {
+    static Logger logger = LogManager.getLogger();
     private static final String SELECT_PASSWORD = "SELECT password FROM web.credentials WHERE login = ?";
     private static final String SELECT_FIRST_NAME = "SELECT first_name FROM web.users us JOIN web.credentials cred ON us.id = cred.user_id WHERE login = ?";
     private static final String SELECT_LOGIN = "SELECT login FROM web.credentials WHERE login = ?";
     private static final String INSERT_USER = "INSERT INTO web.users (first_name, last_name, date_of_birth) VALUES (?, ?, ?)";
     private static final String INSERT_CREDENTIALS = "INSERT INTO web.credentials (login, password, user_id) VALUES (?, ?, ?)";
-    static Logger logger = LogManager.getLogger();
     private static final UserDaoImpl instance = new UserDaoImpl();
 
 
