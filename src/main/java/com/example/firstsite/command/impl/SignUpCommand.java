@@ -45,10 +45,9 @@ public class SignUpCommand implements Command {
                 } catch (DateTimeParseException e) {
                     throw new CommandException(e);
                 }
-                User user = new User(0, firstName, lastName, dateOfBirth);
+                User user = User.newBuilder().setFirstName(firstName).setLastName(lastName).setDateOfBirth(dateOfBirth).build();
                 int userId = userService.createUser(user);
-
-                Credentials credentials = new Credentials(0, login, password, userId);
+                Credentials credentials = Credentials.newBuilder().setLogin(login).setPassword(password).setUserId(userId).build();
                 userService.createCredentials(credentials);
                 request.setAttribute(USER, firstName);
                 page = MAIN_PAGE;

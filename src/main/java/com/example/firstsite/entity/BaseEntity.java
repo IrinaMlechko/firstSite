@@ -5,8 +5,7 @@ import java.util.Objects;
 public class BaseEntity {
     private int id;
 
-    public BaseEntity(int id) {
-        this.id = id;
+    BaseEntity() {
     }
 
     public int getId() {

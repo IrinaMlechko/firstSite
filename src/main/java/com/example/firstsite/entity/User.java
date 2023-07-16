@@ -8,35 +8,20 @@ public class User extends BaseEntity {
     private String lastName;
     private LocalDate dateOfBirth;
 
-    public User(int id, String firstName, String lastName, LocalDate dateOfBirth) {
-        super(id);
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.dateOfBirth = dateOfBirth;
+    private User(){
+        super();
     }
 
     public String getFirstName() {
         return firstName;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
     public String getLastName() {
         return lastName;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
     public LocalDate getDateOfBirth() {
         return dateOfBirth;
-    }
-
-    public void setDateOfBirth(LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
     }
 
     @Override
@@ -61,5 +46,39 @@ public class User extends BaseEntity {
         sb.append(", dateOfBirth=").append(dateOfBirth);
         sb.append('}');
         return sb.toString();
+    }
+
+    public static Builder newBuilder() {
+        return new User().new Builder();
+    }
+    public class Builder {
+
+        private Builder() {
+        }
+
+        public Builder setId(int id) {
+            User.super.setId(id);
+            return this;
+        }
+
+        public Builder setFirstName(String firstName) {
+            User.this.firstName = firstName;
+            return this;
+        }
+
+        public Builder setLastName(String lastName) {
+            User.this.lastName = lastName;
+            return this;
+        }
+
+        public Builder setDateOfBirth(LocalDate dateOfBirth) {
+            User.this.dateOfBirth = dateOfBirth;
+            return this;
+        }
+
+        public User build() {
+            return User.this;
+        }
+
     }
 }

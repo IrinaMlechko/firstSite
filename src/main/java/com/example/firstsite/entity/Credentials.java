@@ -1,5 +1,6 @@
 package com.example.firstsite.entity;
 
+import java.time.LocalDate;
 import java.util.Objects;
 
 public class Credentials extends BaseEntity{
@@ -7,35 +8,24 @@ public class Credentials extends BaseEntity{
     private String password;
     private int userId;
 
-    public Credentials(int id, String login, String password, int userId) {
-        super(id);
-        this.login = login;
-        this.password = password;
-        this.userId = userId;
+    private Credentials() {
+        super();
     }
 
     public String getLogin() {
         return login;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public int getUserId() {
         return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
     }
 
     @Override
@@ -68,5 +58,40 @@ public class Credentials extends BaseEntity{
         sb.append(", userId=").append(userId);
         sb.append('}');
         return sb.toString();
+    }
+
+    public static Credentials.Builder newBuilder() {
+        return new Credentials().new Builder();
+    }
+
+    public class Builder {
+
+        private Builder() {
+        }
+
+        public Credentials.Builder setId(int id) {
+            Credentials.super.setId(id);
+            return this;
+        }
+
+        public Credentials.Builder setLogin(String login) {
+            Credentials.this.login = login;
+            return this;
+        }
+
+        public Credentials.Builder setPassword(String password) {
+            Credentials.this.password = password;
+            return this;
+        }
+
+        public Credentials.Builder setUserId(int userId) {
+            Credentials.this.userId = userId;
+            return this;
+        }
+
+        public Credentials build() {
+            return Credentials.this;
+        }
+
     }
 }

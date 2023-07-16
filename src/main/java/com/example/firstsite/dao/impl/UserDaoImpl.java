@@ -5,6 +5,7 @@ import com.example.firstsite.dao.UserDao;
 import com.example.firstsite.entity.Credentials;
 import com.example.firstsite.entity.User;
 import com.example.firstsite.exception.DaoException;
+import com.example.firstsite.mapper.Mapper;
 import com.example.firstsite.pool.ConnectionPool;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -92,9 +93,7 @@ public class UserDaoImpl implements UserDao, BaseDao<Integer, Credentials> {
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(INSERT_USER, PreparedStatement.RETURN_GENERATED_KEYS))
         {
-            statement.setString(1, user.getFirstName());
-            statement.setString(2, user.getLastName());
-            statement.setDate(3, java.sql.Date.valueOf(user.getDateOfBirth()));
+            Mapper.mapUserToStatement(user, statement);
             statement.executeUpdate();
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
@@ -109,10 +108,9 @@ public class UserDaoImpl implements UserDao, BaseDao<Integer, Credentials> {
 
     @Override
     public void createCredentials(Credentials credentials) throws DaoException {
-        try (Connection connection = ConnectionPool.getInstance().getConnection(); PreparedStatement statement = connection.prepareStatement(INSERT_CREDENTIALS)) {
-            statement.setString(1, credentials.getLogin());
-            statement.setString(2, credentials.getPassword());
-            statement.setInt(3, credentials.getUserId());
+        try (Connection connection = ConnectionPool.getInstance().getConnection();
+             PreparedStatement statement = connection.prepareStatement(INSERT_CREDENTIALS)) {
+            Mapper.mapCredentialsToStatement(credentials, statement);
             statement.executeUpdate();
         } catch (SQLException e) {
             logger.error("Error creating credentials: " + e.getLocalizedMessage());

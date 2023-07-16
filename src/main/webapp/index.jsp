@@ -49,7 +49,7 @@
 </head>
 <body>
 <br/>
-<form action="controller">
+<form action="controller" method="post">
     <input type="hidden" name="command" value="login"/>
     <label for="login">Login:</label>
     <br/>

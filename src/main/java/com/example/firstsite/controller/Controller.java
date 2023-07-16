@@ -29,10 +29,15 @@ public class Controller extends HttpServlet {
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        processRequest(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
         String commandStr = request.getParameter(COMMAND);
         Command command = CommandType.define(commandStr);
@@ -41,9 +46,13 @@ public class Controller extends HttpServlet {
             page = command.execute(request);
             request.getRequestDispatcher(page).forward(request, response);
         } catch (CommandException e) {
-            request.setAttribute(ERROR_MSG, e.getLocalizedMessage());
-            request.getRequestDispatcher(SERVER_ERROR_PAGE).forward(request, response);
+            handleServerError(request, response, e.getLocalizedMessage());
         }
+    }
+
+    private void handleServerError(HttpServletRequest request, HttpServletResponse response, String errorMsg) throws ServletException, IOException {
+        request.setAttribute(ERROR_MSG, errorMsg);
+        request.getRequestDispatcher(SERVER_ERROR_PAGE).forward(request, response);
     }
 
     public void destroy() {

@@ -31,7 +31,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean authenticate(String userName, String password) throws ServiceException {
-        //validate login
         logger.info("Authenticate user " + userName);
         if (!Validator.validateUsername(userName)) {
             throw new ServiceException("Invalid username");
